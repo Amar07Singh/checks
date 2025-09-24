@@ -40,6 +40,24 @@
     <aside class="sidebar" data-sidebar>
 
       <div class="sidebar-info">
+        def fetch_github_commit(commit_url, token=None):
+    """
+    commit_url: e.g., https://github.com/<owner>/<repo>/commit/<hash>
+    token: optional GitHub token for higher rate limits
+    """
+    headers = {"Accept": "application/vnd.github.v3+json"}
+    if token:
+        headers["Authorization"] = f"token {token}"
+
+    # Extract owner/repo/hash from URL
+    parts = commit_url.strip().split("/")
+    owner, repo, sha = parts[3], parts[4], parts[6]
+    api_url = f"https://api.github.com/repos/{owner}/{repo}/commits/{sha}"
+
+    r = requests.get(api_url, headers=headers)
+    if r.status_code != 200:
+        raise ValueError(f"Failed to fetch commit: {r.status_code}, {r.text}")
+    return r.json()
 
         <figure class="avatar-box">
           <img src="./assets/images/mukesh.png" alt="Mukesh Sai Madepalli" width="80">
